@@ -1,0 +1,1 @@
+console.log("Spend Money app ishga tushdi ✅");
