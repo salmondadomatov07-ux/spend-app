@@ -42,6 +42,7 @@ const homeFilterAll = document.getElementById("homeFilterAll");
  const tg = window.Telegram?.WebApp;
  const telegramUser = tg?.initDataUnsafe?.user;
  const USER_ID = telegramUser?.id || 0;
+ alet("USER_ID: " + USER_ID);
 
   let allTransactions = [];
   let activeQuickFilter = "today";
