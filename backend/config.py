@@ -1,0 +1,9 @@
+BOT_TOKEN = "8651989569:AAGCEV35IXrR34FmT8eNoPsMY76keqj4sMM" 
+
+WEB_APP_URL = "https://salmondadomatov07-ux.github.io/spend-app/"
+
+DEFAULT_LANGUAGE = "uz"
+DEFAULT_CURRENCY = "UZS"
+
+REMINDER_HOUR = 21
+REMINDER_MINUTE = 0
