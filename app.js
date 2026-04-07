@@ -38,7 +38,7 @@ const homeFilter7 = document.getElementById("homeFilter7");
 const homeFilter30 = document.getElementById("homeFilter30");
 const homeFilterAll = document.getElementById("homeFilterAll");
 
-  const API_BASE = "http://127.0.0.1:8000";
+  const API_BASE = "https://spend-app-tih5.onrender.com";
   const USER_ID = 5522700870;
 
   let allTransactions = [];
