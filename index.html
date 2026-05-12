@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>SpendUZ Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-icon">💸</div>
+    <div class="splash-title">SpendUZ</div>
+    <div class="splash-sub">Pro · v5.0</div>
+    <div class="splash-loader"><div class="splash-bar"></div></div>
+  </div>
+</div>
+
+<!-- PIN SCREEN -->
+<div id="pinScreen" class="hidden">
+  <div class="pin-wrap">
+    <div class="pin-avatar" id="pinAvatar">😊</div>
+    <div class="pin-name" id="pinName">Salmon</div>
+    <div class="pin-title" id="pinTitle">PIN kodni kiriting</div>
+    <div class="pin-dots">
+      <span class="pin-dot" id="pd1"></span><span class="pin-dot" id="pd2"></span>
+      <span class="pin-dot" id="pd3"></span><span class="pin-dot" id="pd4"></span>
+    </div>
+    <div class="pin-error hidden" id="pinError">Noto'g'ri PIN!</div>
+    <div class="pin-pad">
+      <button class="pin-btn" data-n="1">1</button><button class="pin-btn" data-n="2">2</button><button class="pin-btn" data-n="3">3</button>
+      <button class="pin-btn" data-n="4">4</button><button class="pin-btn" data-n="5">5</button><button class="pin-btn" data-n="6">6</button>
+      <button class="pin-btn" data-n="7">7</button><button class="pin-btn" data-n="8">8</button><button class="pin-btn" data-n="9">9</button>
+      <button class="pin-btn pin-clear" id="pinClear">⌫</button>
+      <button class="pin-btn" data-n="0">0</button>
+      <button class="pin-btn pin-ok" id="pinOk">✓</button>
+    </div>
+    <button class="pin-forgot" id="pinForgot">PIN ni unutdim</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="hidden">
+  <div class="login-wrap">
+    <div class="login-logo">💸</div>
+    <div class="login-title">SpendUZ Pro</div>
+    <div class="login-sub" id="loginSubText">Moliyangizni professional boshqaring</div>
+    <div class="login-form">
+      <div class="form-group">
+        <label id="loginNameLabel">Ismingiz</label>
+        <input type="text" id="loginName" placeholder="Salmon" maxlength="30"/>
+      </div>
+      <div class="form-group">
+        <label id="loginAvatarLabel">Avatar tanlang</label>
+        <div class="avatar-grid" id="avatarGrid"></div>
+      </div>
+      <!-- Til tanlash login ekranida -->
+      <div class="form-group">
+        <label>Til / Language / Язык / Забон</label>
+        <div class="lang-select-grid" id="loginLangGrid">
+          <button class="lang-btn active" data-lang="uz">🇺🇿 O'zbek</button>
+          <button class="lang-btn" data-lang="ru">🇷🇺 Русский</button>
+          <button class="lang-btn" data-lang="en">🇬🇧 English</button>
+          <button class="lang-btn" data-lang="tj">🇹🇯 Тоҷикӣ</button>
+        </div>
+      </div>
+      <button class="submit-btn" id="loginBtn">✓ Boshlash</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <div class="top-avatar" id="topAvatar">😊</div>
+      <div class="top-user-info">
+        <div class="top-user-name" id="topUserName">Foydalanuvchi</div>
+        <div class="top-user-sub" id="topUserSub">SpendUZ Pro</div>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <button class="icon-btn" id="rateBtn" title="Valyuta kursi">💱</button>
+      <button class="icon-btn" id="notifTopBtn" title="Bildirishnoma">🔔</button>
+      <button class="icon-btn" id="themeToggleBtn" title="Mavzu">🌙</button>
+    </div>
+  </header>
+
+  <!-- RATE BAR -->
+  <div class="rate-bar hidden" id="rateBar">
+    <span id="rateUSD">🇺🇸 USD: —</span>
+    <span id="rateEUR">🇪🇺 EUR: —</span>
+    <span id="rateRUB">🇷🇺 RUB: —</span>
+    <span class="rate-updated" id="rateUpdated"></span>
+  </div>
+
+  <main id="pages">
+
+    <!-- ══ HOME ══ -->
+    <section class="page active" id="page-home">
+      <div class="page-scroll">
+
+        <!-- PDF & Mic quick actions -->
+        <div class="quick-actions">
+          <button class="quick-btn" id="pdfBtn">📤 PDF</button>
+          <button class="quick-btn mic" id="quickMicBtn">🎙️ Ovoz bilan qo'shish</button>
+        </div>
+
+        <div class="balance-hero">
+          <div class="balance-label" id="lbl_today_balance">Bugungi balans</div>
+          <div class="balance-amount" id="todayBalance">0 so'm</div>
+          <div class="balance-date" id="todayDate"></div>
+          <div class="balance-chips">
+            <div class="chip chip-income">
+              <span class="chip-icon">⬆</span>
+              <div><div class="chip-label" id="lbl_income">Daromad</div><div class="chip-val" id="totalIncome">0</div></div>
+            </div>
+            <div class="chip chip-expense">
+              <span class="chip-icon">⬇</span>
+              <div><div class="chip-label" id="lbl_expense">Xarajat</div><div class="chip-val" id="totalExpense">0</div></div>
+            </div>
+          </div>
+          <div class="balance-chips" style="margin-top:6px">
+            <div class="chip chip-debt-given">
+              <span class="chip-icon">💸</span>
+              <div><div class="chip-label" id="lbl_debt_given">Qarz berdim</div><div class="chip-val" id="totalDebtGiven">0</div></div>
+            </div>
+            <div class="chip chip-debt-taken">
+              <span class="chip-icon">💰</span>
+              <div><div class="chip-label" id="lbl_debt_taken">Qarz oldim</div><div class="chip-val" id="totalDebtTaken">0</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI INSIGHT -->
+        <div class="ai-insight-card">
+          <div class="ai-insight-icon">🤖</div>
+          <div class="ai-insight-text" id="aiInsightText">AI tahlil...</div>
+          <button class="ai-insight-btn" onclick="switchTab('ai')">→</button>
+        </div>
+
+        <!-- MONTHLY REPORT -->
+        <div class="section-title" id="lbl_monthly_report">Oylik hisobot</div>
+        <div class="monthly-report-card">
+          <div class="report-row">
+            <span class="report-month" id="reportMonth">—</span>
+            <span class="report-net" id="reportNet">0</span>
+          </div>
+          <div class="report-bar-bg"><div class="report-bar-fill" id="reportBarFill" style="width:0%"></div></div>
+          <div class="report-detail">
+            <span><span id="lbl_income2">Daromad</span>: <b id="reportIncome">0</b></span>
+            <span><span id="lbl_expense2">Xarajat</span>: <b id="reportExpense">0</b></span>
+          </div>
+        </div>
+
+        <!-- CHART TABS -->
+        <div class="section-header">
+          <div class="section-title" id="lbl_chart">Grafik</div>
+          <div class="chart-tabs">
+            <button class="chart-tab active" data-chart="donut">🍩</button>
+            <button class="chart-tab" data-chart="bar">📊</button>
+          </div>
+        </div>
+        <div class="chart-card" id="donutChartCard">
+          <div class="donut-wrap">
+            <svg id="donutSvg" viewBox="0 0 120 120" width="130" height="130"></svg>
+            <div class="donut-center" id="donutCenter">—</div>
+          </div>
+          <div class="chart-legend" id="chartLegend"></div>
+        </div>
+        <div class="chart-card hidden" id="barChartCard">
+          <div class="bar-tabs">
+            <button class="bar-tab active" data-period="week" id="lbl_weekly">Haftalik</button>
+            <button class="bar-tab" data-period="month" id="lbl_monthly">Oylik</button>
+          </div>
+          <div class="bar-chart-wrap" id="barChartWrap"></div>
+        </div>
+
+        <!-- RECENT TXN -->
+        <div class="section-header">
+          <div class="section-title" id="lbl_recent">So'nggi tranzaksiyalar</div>
+          <button class="link-btn" id="seeAllBtn">Barchasi →</button>
+        </div>
+        <div id="recentList" class="txn-list">
+          <div class="empty-state"><div class="empty-icon">📭</div><div id="lbl_no_txn">Hali tranzaksiya yo'q</div></div>
+        </div>
+
+        <!-- ALL HISTORY (hidden by default) -->
+        <div id="allHistoryWrap" class="hidden">
+          <div class="section-header">
+            <div class="section-title" id="lbl_all_txn">Barcha tranzaksiyalar</div>
+            <button class="link-btn" id="hideAllBtn">Yopish ↑</button>
+          </div>
+          <div class="history-filters">
+            <input type="text" id="historySearch" class="search-input" id="lbl_search" placeholder="🔍 Qidirish..."/>
+            <div class="filter-row">
+              <select id="filterType" class="filter-select">
+                <option value="all" id="lbl_all">Barchasi</option>
+                <option value="income">Daromad</option>
+                <option value="expense">Xarajat</option>
+                <option value="debt_given">Qarz berdim</option>
+                <option value="debt_taken">Qarz oldim</option>
+              </select>
+              <select id="filterMonth" class="filter-select"><option value="all">Barcha oylar</option></select>
+            </div>
+          </div>
+          <div id="historyList" class="txn-list"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ BUDGET ══ -->
+    <section class="page" id="page-budget">
+      <div class="page-scroll">
+        <div class="page-header">
+          <h2 id="lbl_budget_title">📊 Byudjet</h2>
+          <button class="accent-btn small" id="addBudgetBtn">+</button>
+        </div>
+        <div class="budget-summary">
+          <div class="budget-summary-item"><div class="bsi-label" id="lbl_limit">Limit</div><div class="bsi-val" id="budgetTotalLimit">0</div></div>
+          <div class="budget-summary-item"><div class="bsi-label" id="lbl_spent">Sarflangan</div><div class="bsi-val warn" id="budgetTotalSpent">0</div></div>
+          <div class="budget-summary-item"><div class="bsi-label" id="lbl_left">Qolgan</div><div class="bsi-val good" id="budgetTotalLeft">0</div></div>
+        </div>
+        <div id="budgetList" class="budget-list">
+          <div class="empty-state"><div class="empty-icon">📊</div><div id="lbl_no_budget">Hali byudjet yo'q</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ GOALS ══ -->
+    <section class="page" id="page-goals">
+      <div class="page-scroll">
+        <div class="page-header">
+          <h2 id="lbl_goals_title">🎯 Maqsadlar</h2>
+          <button class="accent-btn small" id="addGoalBtn">+</button>
+        </div>
+
+        <!-- GOALS STATS -->
+        <div class="goals-stats" id="goalsStats"></div>
+
+        <!-- GOALS LIST -->
+        <div id="goalsList" class="goals-list">
+          <div class="empty-state"><div class="empty-icon">🎯</div><div id="lbl_no_goal">Hali maqsad yo'q</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ ADD ══ -->
+    <section class="page" id="page-add">
+      <div class="page-scroll">
+        <div class="page-header"><h2 id="addFormTitle">Qo'shish</h2></div>
+        <div class="tx-type-tabs">
+          <button class="tx-tab active" data-type="expense" id="tab_expense">⬇ Xarajat</button>
+          <button class="tx-tab" data-type="income" id="tab_income">⬆ Daromad</button>
+          <button class="tx-tab" data-type="debt_given" id="tab_debt_given">💸 Qarz berdim</button>
+          <button class="tx-tab" data-type="debt_taken" id="tab_debt_taken">💰 Qarz oldim</button>
+        </div>
+        <div class="form-card">
+          <input type="hidden" id="editId"/>
+          <div class="form-group">
+            <label id="lbl_amount">Miqdor</label>
+            <div class="amount-wrap">
+              <input type="number" id="amountInput" placeholder="0" inputmode="decimal" min="0"/>
+              <select id="currencyInput" class="currency-select">
+                <option value="uzs">so'm</option>
+                <option value="usd">USD</option>
+                <option value="eur">EUR</option>
+                <option value="rub">RUB</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label id="lbl_category">Kategoriya</label>
+            <div class="category-search-wrap">
+              <input type="text" id="categorySearch" placeholder="Qidirish..." autocomplete="off"/>
+              <button class="icon-btn-sm" id="addCatBtn">＋</button>
+            </div>
+            <div id="categoryGrid" class="category-grid"></div>
+            <input type="hidden" id="selectedCategory"/>
+          </div>
+          <div class="form-group" id="debtPersonWrap" style="display:none">
+            <label id="lbl_debt_person">Kim bilan</label>
+            <input type="text" id="debtPerson" placeholder="Jasur"/>
+          </div>
+          <div class="form-group">
+            <label id="lbl_date">Sana</label>
+            <input type="date" id="dateInput"/>
+          </div>
+          <div class="form-group">
+            <label id="lbl_repeat">Takroriy</label>
+            <select id="repeatSelect" class="filter-select">
+              <option value="none" id="lbl_no_repeat">Yo'q</option>
+              <option value="daily" id="lbl_daily">Har kun</option>
+              <option value="weekly" id="lbl_weekly2">Har hafta</option>
+              <option value="monthly" id="lbl_monthly2">Har oy</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label id="lbl_note">Izoh</label>
+            <input type="text" id="noteInput" placeholder="Masalan: tushlik..."/>
+          </div>
+          <div class="form-group">
+            <label id="lbl_tags">Teglar (vergul bilan)</label>
+            <input type="text" id="tagsInput" placeholder="ish, shaxsiy, oila"/>
+          </div>
+          <button class="mic-btn" id="micBtn" type="button">🎙️</button>
+          <div class="mic-status hidden" id="micStatus">🎤 Gapiring...</div>
+          <button class="submit-btn" id="submitTxn">✓ Saqlash</button>
+          <button class="cancel-btn hidden" id="cancelEdit">✕ Bekor qilish</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ AI CHAT ══ -->
+    <section class="page" id="page-ai">
+      <div class="page-scroll" style="display:flex;flex-direction:column;height:100%">
+        <div class="page-header"><h2>🤖 AI <span id="lbl_ai_title">Moliya Maslahati</span></h2></div>
+        <div class="ai-chat-wrap">
+          <div class="ai-chat-messages" id="aiChatMessages">
+            <div class="ai-msg bot">
+              <div class="ai-msg-avatar">🤖</div>
+              <div class="ai-msg-bubble" id="aiWelcomeMsg">Salom! Men SpendUZ AI yordamchisiman. Moliyangiz haqida savol bering!</div>
+            </div>
+          </div>
+          <div class="ai-quick-btns" id="aiQuickBtns"></div>
+          <div class="ai-input-wrap">
+            <input type="text" id="aiInput" class="ai-input" placeholder="Savol yozing..."/>
+            <button class="ai-send-btn" id="aiSendBtn">➤</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SETTINGS ══ -->
+    <section class="page" id="page-settings">
+      <div class="page-scroll">
+
+        <!-- PROFIL HERO -->
+        <div class="profile-hero">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar" id="profileAvatar">😊</div>
+            <button class="profile-avatar-edit" id="changeAvatarBtn">✏️</button>
+          </div>
+          <div class="profile-name" id="profileName">Foydalanuvchi</div>
+          <div class="profile-username" id="profileUsername">@spenduz</div>
+          <div class="profile-since" id="profileSince"></div>
+          <div class="profile-stats">
+            <div class="pstat"><div class="pstat-val" id="pstatTxn">0</div><div class="pstat-label" id="lbl_pstat_txn">Tranzaksiya</div></div>
+            <div class="pstat-divider"></div>
+            <div class="pstat"><div class="pstat-val" id="pstatIncome">0</div><div class="pstat-label" id="lbl_pstat_inc">Daromad</div></div>
+            <div class="pstat-divider"></div>
+            <div class="pstat"><div class="pstat-val" id="pstatExpense">0</div><div class="pstat-label" id="lbl_pstat_exp">Xarajat</div></div>
+          </div>
+        </div>
+
+        <!-- PROFIL -->
+        <div class="settings-group">
+          <div class="settings-group-title" id="lbl_profile">Profil</div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label" id="lbl_name">Ism</div></div>
+            <input type="text" id="editName" class="settings-inline-input" maxlength="30"/>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Username</div></div>
+            <input type="text" id="editUsername" class="settings-inline-input" maxlength="30"/>
+          </div>
+          <button class="accent-btn full-width mgt" id="saveProfileBtn">✓ <span id="lbl_save_profile">Profilni saqlash</span></button>
+        </div>
+
+        <!-- TIL -->
+        <div class="settings-group">
+          <div class="settings-group-title" id="lbl_language_title">Til</div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label" id="lbl_lang_label">Interfeys tili</div></div>
+          </div>
+          <div class="lang-select-grid" style="padding:8px 12px 12px" id="settingsLangGrid">
+            <button class="lang-btn active" data-lang="uz">🇺🇿 O'zbek</button>
+            <button class="lang-btn" data-lang="ru">🇷🇺 Русский</button>
+            <button class="lang-btn" data-lang="en">🇬🇧 English</button>
+            <button class="lang-btn" data-lang="tj">🇹🇯 Тоҷикӣ</button>
+          </div>
+        </div>
+
+        <!-- INTERFEYS -->
+        <div class="settings-group">
+          <div class="settings-group-title" id="lbl_interface">Interfeys</div>
+          <div class="settings-item">
+            <div class="settings-item-info">
+              <div class="settings-item-label" id="lbl_theme">Mavzu</div>
+              <div class="settings-item-sub" id="lbl_theme_sub">Qorong'i / Yorug'</div>
+            </div>
+            <div class="toggle-wrap">
+              <input type="checkbox" id="themeToggle" class="toggle-input" checked/>
+              <label for="themeToggle" class="toggle-label"></label>
+            </div>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label" id="lbl_currency">Valyuta</div></div>
+            <select class="settings-select" id="currencySelect">
+              <option value="uzs">so'm</option>
+              <option value="usd">USD $</option>
+              <option value="eur">EUR €</option>
+              <option value="rub">RUB ₽</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- BILDIRISHNOMA -->
+        <div class="settings-group">
+          <div class="settings-group-title" id="lbl_notif_title">🔔 Bildirishnomalar</div>
+          <div class="settings-item">
+            <div class="settings-item-info">
+              <div class="settings-item-label" id="lbl_push_notif">Push bildirishnoma</div>
+              <div class="settings-item-sub" id="notifStatusText">O'chirilgan</div>
+            </div>
+            <div class="toggle-wrap">
+              <input type="checkbox" id="notifToggle" class="toggle-input"/>
+              <label for="notifToggle" class="toggle-label"></label>
+            </div>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label" id="lbl_notif_time">Eslatma vaqti</div></div>
+            <input type="time" id="notifTime" class="settings-inline-input" value="21:00"/>
+          </div>
+        </div>
+
+        <!-- XAVFSIZLIK -->
+        <div class="settings-group">
+          <div class="settings-group-title" id="lbl_security">🔐 Xavfsizlik</div>
+          <div class="settings-item">
+            <div class="settings-item-info">
+              <div class="settings-item-label" id="lbl_pin">PIN kod</div>
+              <div class="settings-item-sub" id="pinStatusText">O'rnatilmagan</div>
+            </div>
+            <button class="accent-btn small" id="setPinBtn">O'rnatish</button>
+          </div>
+          <div class="settings-item" id="removePinRow" style="display:none">
+            <div class="settings-item-info"><div class="settings-item-label" id="lbl_remove_pin">PIN ni o'chirish</div></div>
+            <button class="danger-btn small" id="removePinBtn">O'chirish</button>
+          </div>
+        </div>
+
+        <!-- KATEGORIYALAR -->
+        <div class="settings-group">
+          <div class="settings-group-title" id="lbl_custom_cats">Maxsus kategoriyalar</div>
+          <div id="catManageList" class="cat-manage-list"></div>
+          <button class="accent-btn full-width mgt" id="settingsAddCatBtn">+ <span id="lbl_add_cat">Yangi kategoriya</span></button>
+        </div>
+
+        <!-- OILA -->
+        <div class="settings-group">
+          <div class="settings-group-title" id="lbl_family">👥 Oila byudjeti</div>
+          <div id="familyMembersList"></div>
+          <button class="accent-btn full-width mgt" id="addFamilyBtn">+ <span id="lbl_add_member">A'zo qo'shish</span></button>
+        </div>
+
+        <!-- MA'LUMOTLAR -->
+        <div class="settings-group">
+          <div class="settings-group-title" id="lbl_data">Ma'lumotlar</div>
+          <button class="settings-action-btn" id="exportBtn">📤 <span id="lbl_export">Eksport (JSON)</span></button>
+          <button class="settings-action-btn" id="importBtn">📥 <span id="lbl_import">Import</span></button>
+          <input type="file" id="importFile" accept=".json" class="hidden"/>
+          <button class="settings-action-btn danger" id="resetBtn">⚠️ <span id="lbl_reset">Barcha ma'lumotlarni o'chirish</span></button>
+        </div>
+
+        <!-- HAQIDA -->
+        <div class="settings-group">
+          <div class="settings-group-title" id="lbl_about">Ilova haqida</div>
+          <div class="about-card">
+            <div class="about-logo">💸</div>
+            <div class="about-name">SpendUZ Pro</div>
+            <div class="about-ver">v5.0.0</div>
+            <div class="about-desc">@Spend_uz_bot</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="home"><span class="nav-icon">🏠</span><span class="nav-label" id="nav_home">Bosh</span></button>
+    <button class="nav-btn" data-tab="budget"><span class="nav-icon">📊</span><span class="nav-label" id="nav_budget">Byudjet</span></button>
+    <button class="nav-btn nav-add-btn" data-tab="add"><span class="nav-icon-add">＋</span></button>
+    <button class="nav-btn" data-tab="goals"><span class="nav-icon">🎯</span><span class="nav-label" id="nav_goals">Maqsad</span></button>
+    <button class="nav-btn" data-tab="settings"><span class="nav-icon">⚙️</span><span class="nav-label" id="nav_settings">Sozlamalar</span></button>
+  </nav>
+</div>
+
+<!-- MODALS -->
+
+<!-- Budget Modal -->
+<div class="modal-overlay hidden" id="budgetModal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="lbl_add_budget">Byudjet qo'shish</h3><button class="modal-close" id="closeBudgetModal">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label id="lbl_bcat">Kategoriya</label><select id="budgetCatSelect" class="filter-select" style="width:100%"></select></div>
+      <div class="form-group"><label id="lbl_blimit">Limit</label><input type="number" id="budgetLimitInput" placeholder="500000" min="0"/></div>
+      <div class="form-group"><label id="lbl_bmonth">Oy</label><input type="month" id="budgetMonthInput"/></div>
+      <button class="submit-btn" id="saveBudgetBtn">✓ Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<!-- Goal Modal -->
+<div class="modal-overlay hidden" id="goalModal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="lbl_add_goal">Maqsad qo'shish</h3><button class="modal-close" id="closeGoalModal">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label id="lbl_goal_name">Nomi</label><input type="text" id="goalName" placeholder="iPhone 16"/></div>
+      <div class="form-group"><label>Emoji</label><input type="text" id="goalEmoji" placeholder="🎯" maxlength="4"/></div>
+      <div class="form-group"><label id="lbl_goal_target">Maqsad summa</label><input type="number" id="goalTarget" placeholder="5000000" min="0"/></div>
+      <div class="form-group"><label id="lbl_goal_current">Hozirgi jamg'arma</label><input type="number" id="goalCurrent" placeholder="0" min="0"/></div>
+      <div class="form-group"><label id="lbl_goal_deadline">Muddat</label><input type="date" id="goalDeadline"/></div>
+      <button class="submit-btn" id="saveGoalBtn">✓ <span id="lbl_save">Saqlash</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Add to Goal Modal -->
+<div class="modal-overlay hidden" id="goalAddModal">
+  <div class="modal small-modal">
+    <div class="modal-header"><h3 id="goalAddTitle">Jamg'arma</h3><button class="modal-close" id="closeGoalAddModal">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label id="lbl_add_amount">Miqdor</label><input type="number" id="goalAddAmount" placeholder="100000" min="0"/></div>
+      <button class="submit-btn" id="saveGoalAddBtn">✓ <span id="lbl_add">Qo'shish</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt Modal -->
+<div class="modal-overlay hidden" id="receiptModal">
+  <div class="modal">
+    <div class="modal-header"><h3>🧾 <span id="lbl_receipt">Chek</span></h3><button class="modal-close" id="closeReceiptModal">✕</button></div>
+    <div class="modal-body">
+      <div class="receipt" id="receiptContent"></div>
+      <button class="submit-btn" id="receiptShareBtn">📤 <span id="lbl_share">Ulashish</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal-overlay hidden" id="catModal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="lbl_new_cat">Yangi kategoriya</h3><button class="modal-close" id="closeCatModal">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label id="lbl_cat_name">Nomi</label><input type="text" id="newCatName" placeholder="Kategoriya..."/></div>
+      <div class="form-group"><label>Emoji</label><div class="emoji-picker" id="emojiPicker"></div><input type="text" id="newCatEmoji" placeholder="📦" maxlength="4"/></div>
+      <div class="form-group"><label id="lbl_color">Rang</label><div class="color-picker" id="colorPicker"></div><input type="hidden" id="newCatColor" value="#00E5A0"/></div>
+      <div class="form-group"><label id="lbl_type">Turi</label>
+        <div class="type-toggle small">
+          <button class="type-btn active" data-cattype="expense" id="cattype_expense">Xarajat</button>
+          <button class="type-btn" data-cattype="income" id="cattype_income">Daromad</button>
+        </div>
+      </div>
+      <button class="submit-btn" id="saveCatBtn">✓ <span id="lbl_save2">Saqlash</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Avatar Modal -->
+<div class="modal-overlay hidden" id="avatarModal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="lbl_avatar">Avatar tanlang</h3><button class="modal-close" id="closeAvatarModal">✕</button></div>
+    <div class="modal-body"><div class="avatar-grid-big" id="avatarGridBig"></div></div>
+  </div>
+</div>
+
+<!-- PIN Setup Modal -->
+<div class="modal-overlay hidden" id="pinSetupModal">
+  <div class="modal small-modal">
+    <div class="modal-header"><h3 id="pinSetupTitle">PIN o'rnatish</h3><button class="modal-close" id="closePinSetupModal">✕</button></div>
+    <div class="modal-body">
+      <div class="pin-setup-dots">
+        <span class="pin-dot" id="psd1"></span><span class="pin-dot" id="psd2"></span>
+        <span class="pin-dot" id="psd3"></span><span class="pin-dot" id="psd4"></span>
+      </div>
+      <div class="pin-setup-hint" id="pinSetupHint">Yangi PIN kiriting</div>
+      <div class="pin-pad">
+        <button class="pin-btn" data-sn="1">1</button><button class="pin-btn" data-sn="2">2</button><button class="pin-btn" data-sn="3">3</button>
+        <button class="pin-btn" data-sn="4">4</button><button class="pin-btn" data-sn="5">5</button><button class="pin-btn" data-sn="6">6</button>
+        <button class="pin-btn" data-sn="7">7</button><button class="pin-btn" data-sn="8">8</button><button class="pin-btn" data-sn="9">9</button>
+        <button class="pin-btn pin-clear" id="pinSetupClear">⌫</button>
+        <button class="pin-btn" data-sn="0">0</button>
+        <button class="pin-btn pin-ok" id="pinSetupOk">✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Family Modal -->
+<div class="modal-overlay hidden" id="familyModal">
+  <div class="modal small-modal">
+    <div class="modal-header"><h3 id="lbl_add_family">A'zo qo'shish</h3><button class="modal-close" id="closeFamilyModal">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label id="lbl_member_name">Ismi</label><input type="text" id="familyName" placeholder="Malika"/></div>
+      <div class="form-group"><label>Emoji</label><input type="text" id="familyEmoji" placeholder="👩" maxlength="4"/></div>
+      <button class="submit-btn" id="saveFamilyBtn">✓ <span id="lbl_save3">Saqlash</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay hidden" id="confirmModal">
+  <div class="modal small-modal">
+    <div class="modal-header"><h3 id="confirmTitle">Tasdiqlang</h3><button class="modal-close" id="closeConfirmModal">✕</button></div>
+    <div class="modal-body">
+      <p id="confirmMsg">O'chirishni istaysizmi?</p>
+      <div class="confirm-btns">
+        <button class="cancel-btn" id="confirmNo">Bekor qilish</button>
+        <button class="danger-confirm-btn" id="confirmYes">O'chirish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>
