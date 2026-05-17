@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <title>SpendUZ Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo">💸</div>
+    <div class="splash-title">SpendUZ</div>
+    <div class="splash-sub">PRO · V5.0</div>
+    <div class="splash-track"><div class="splash-bar"></div></div>
+  </div>
+</div>
+
+<!-- PIN SCREEN -->
+<div id="pinScreen" class="hidden">
+  <div class="pin-wrap">
+    <div class="pin-avatar" id="pinAvatar">😊</div>
+    <div class="pin-name"   id="pinName">Foydalanuvchi</div>
+    <div class="pin-label"  id="pinLabel">PIN kodni kiriting</div>
+    <div class="pin-dots">
+      <span class="pin-dot" id="pd1"></span>
+      <span class="pin-dot" id="pd2"></span>
+      <span class="pin-dot" id="pd3"></span>
+      <span class="pin-dot" id="pd4"></span>
+    </div>
+    <div class="pin-error hidden" id="pinError"></div>
+    <div class="pin-timer hidden" id="pinTimer"></div>
+    <div class="pin-pad">
+      <button class="pin-btn" data-n="1">1</button>
+      <button class="pin-btn" data-n="2">2</button>
+      <button class="pin-btn" data-n="3">3</button>
+      <button class="pin-btn" data-n="4">4</button>
+      <button class="pin-btn" data-n="5">5</button>
+      <button class="pin-btn" data-n="6">6</button>
+      <button class="pin-btn" data-n="7">7</button>
+      <button class="pin-btn" data-n="8">8</button>
+      <button class="pin-btn" data-n="9">9</button>
+      <button class="pin-btn pin-clear" id="pinClear">⌫</button>
+      <button class="pin-btn" data-n="0">0</button>
+      <button class="pin-btn pin-ok" id="pinOk">✓</button>
+    </div>
+    <button class="pin-forgot" id="pinForgot">PIN ni unutdim?</button>
+  </div>
+</div>
+
+<!-- PIN RESET -->
+<div id="pinResetScreen" class="hidden">
+  <div class="pin-wrap">
+    <div style="font-size:48px;margin-bottom:12px">🔐</div>
+    <div class="pin-label" id="pinResetLabel">Bot orqali yuborilgan kodni kiriting</div>
+    <input type="number" id="pinResetCode" class="pin-code-input" placeholder="123456" maxlength="6" inputmode="numeric"/>
+    <div class="pin-error hidden" id="pinResetError"></div>
+    <div class="pin-reset-info" id="pinResetInfo"></div>
+    <button class="submit-btn" style="margin-top:12px" id="pinResetBtn">✓ Tasdiqlash</button>
+    <button class="cancel-btn" style="margin-top:8px" id="pinResetBack">⬅ Orqaga</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="hidden">
+  <div class="login-wrap">
+    <div class="login-logo">💸</div>
+    <div class="login-title">SpendUZ Pro</div>
+    <div class="login-sub" id="loginSub">Moliyangizni professional boshqaring</div>
+    <div class="login-form">
+      <div class="form-group">
+        <label id="loginNameLbl">Ismingiz</label>
+        <input type="text" id="loginName" placeholder="Salmon" maxlength="30"/>
+      </div>
+      <div class="form-group">
+        <label id="loginAvatarLbl">Avatar tanlang</label>
+        <div class="avatar-grid" id="loginAvatarGrid"></div>
+      </div>
+      <div class="form-group">
+        <label>Til tanlang</label>
+        <div class="lang-grid" id="loginLangGrid">
+          <button class="lang-btn active" data-lang="uz">🇺🇿 O'zbek</button>
+          <button class="lang-btn" data-lang="ru">🇷🇺 Русский</button>
+          <button class="lang-btn" data-lang="en">🇬🇧 English</button>
+          <button class="lang-btn" data-lang="tj">🇹🇯 Тоҷикӣ</button>
+        </div>
+      </div>
+      <button class="submit-btn" id="loginBtn">✓ Boshlash</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="top-left">
+      <div class="top-avatar" id="topAvatar">😊</div>
+      <div class="top-info">
+        <div class="top-name" id="topName">Foydalanuvchi</div>
+        <div class="top-user" id="topUser">@spenduz</div>
+      </div>
+    </div>
+    <div class="top-right">
+      <button class="icon-btn" id="rateBtn">💱</button>
+      <button class="icon-btn" id="notifBtn">🔔</button>
+      <button class="icon-btn" id="themeBtn">🌙</button>
+    </div>
+  </header>
+
+  <!-- RATE BAR -->
+  <div class="rate-bar hidden" id="rateBar">
+    <span id="rUSD">🇺🇸 USD —</span>
+    <span id="rEUR">🇪🇺 EUR —</span>
+    <span id="rRUB">🇷🇺 RUB —</span>
+    <span class="rate-time" id="rTime"></span>
+  </div>
+
+  <!-- PAGES -->
+  <main id="pages">
+
+    <!-- HOME -->
+    <section class="page active" id="page-home">
+      <div class="page-scroll">
+        <div class="quick-row">
+          <button class="quick-btn" id="pdfBtn">📤 PDF</button>
+          <button class="quick-btn mic-q" id="quickMicBtn">🎙️ Ovoz</button>
+        </div>
+        <div class="balance-hero">
+          <div class="bal-label" id="lbl_balance">Umumiy balans</div>
+          <div class="bal-amount" id="totalBalance">0 so'm</div>
+          <div class="bal-date" id="todayDate"></div>
+          <div class="bal-chips">
+            <div class="chip chip-inc">
+              <div class="chip-ico">⬆</div>
+              <div><div class="chip-lbl" id="lbl_income">Daromad</div><div class="chip-val" id="chipIncome">0</div></div>
+            </div>
+            <div class="chip chip-exp">
+              <div class="chip-ico">⬇</div>
+              <div><div class="chip-lbl" id="lbl_expense">Xarajat</div><div class="chip-val" id="chipExpense">0</div></div>
+            </div>
+          </div>
+          <div class="bal-chips" style="margin-top:6px">
+            <div class="chip chip-dg">
+              <div class="chip-ico">💸</div>
+              <div><div class="chip-lbl" id="lbl_debt_given">Qarz berdim</div><div class="chip-val" id="chipDG">0</div></div>
+            </div>
+            <div class="chip chip-dt">
+              <div class="chip-ico">💰</div>
+              <div><div class="chip-lbl" id="lbl_debt_taken">Qarz oldim</div><div class="chip-val" id="chipDT">0</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-insight" id="aiInsightCard">
+          <span class="ai-ico">🤖</span>
+          <span class="ai-txt" id="aiInsightText">Tahlil...</span>
+          <button class="ai-more" onclick="switchTab('ai')">→</button>
+        </div>
+
+        <div class="section-title" id="lbl_monthly">Oylik hisobot</div>
+        <div class="month-card">
+          <div class="month-top">
+            <span class="month-name" id="monthName">—</span>
+            <span class="month-net" id="monthNet">0</span>
+          </div>
+          <div class="month-bar-bg"><div class="month-bar" id="monthBar"></div></div>
+          <div class="month-detail">
+            <span><span id="lbl_inc2">Daromad</span>: <b id="mInc">0</b></span>
+            <span><span id="lbl_exp2">Xarajat</span>: <b id="mExp">0</b></span>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title" id="lbl_chart">Grafik</div>
+          <div class="chart-tabs">
+            <button class="chart-tab active" data-chart="donut">🍩</button>
+            <button class="chart-tab" data-chart="bar">📊</button>
+          </div>
+        </div>
+        <div class="chart-card" id="donutCard">
+          <div class="donut-wrap">
+            <svg id="donutSvg" viewBox="0 0 120 120" width="130" height="130"></svg>
+            <div class="donut-center" id="donutCenter">—</div>
+          </div>
+          <div class="chart-legend" id="chartLegend"></div>
+        </div>
+        <div class="chart-card hidden" id="barCard">
+          <div class="bar-period">
+            <button class="bar-tab active" data-period="week" id="lbl_week">Haftalik</button>
+            <button class="bar-tab" data-period="month" id="lbl_month">Oylik</button>
+          </div>
+          <div class="bar-wrap" id="barWrap"></div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title" id="lbl_recent">So'nggi tranzaksiyalar</div>
+          <button class="link-btn" id="seeAllBtn">Barchasi →</button>
+        </div>
+        <div id="recentList" class="txn-list"></div>
+
+        <div id="allHistory" class="hidden">
+          <div class="section-header">
+            <div class="section-title" id="lbl_all">Barcha tranzaksiyalar</div>
+            <button class="link-btn" id="hideAllBtn">Yopish ↑</button>
+          </div>
+          <div class="hist-filters">
+            <input type="text" id="histSearch" class="search-inp" placeholder="🔍 Qidirish..."/>
+            <div class="filter-row">
+              <select id="filterType" class="filter-sel">
+                <option value="all">Barchasi</option>
+                <option value="income">Daromad</option>
+                <option value="expense">Xarajat</option>
+                <option value="debt_given">Qarz berdim</option>
+                <option value="debt_taken">Qarz oldim</option>
+              </select>
+              <select id="filterMonth" class="filter-sel"><option value="all">Barcha oylar</option></select>
+            </div>
+          </div>
+          <div id="histList" class="txn-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BUDGET -->
+    <section class="page" id="page-budget">
+      <div class="page-scroll">
+        <div class="page-header">
+          <h2 id="lbl_budget_title">📊 Byudjet</h2>
+          <button class="big-add-btn" id="addBudgetBtn">＋ Qo'shish</button>
+        </div>
+        <div class="budget-summary" id="budgetSummary"></div>
+        <div id="budgetList" class="budget-list"></div>
+      </div>
+    </section>
+
+    <!-- ADD -->
+    <section class="page" id="page-add">
+      <div class="page-scroll">
+        <div class="page-header"><h2 id="addTitle">Qo'shish</h2></div>
+        <div class="type-tabs">
+          <button class="type-tab active" data-type="expense"    id="tab_exp">⬇ Xarajat</button>
+          <button class="type-tab"        data-type="income"     id="tab_inc">⬆ Daromad</button>
+          <button class="type-tab"        data-type="debt_given" id="tab_dg">💸 Qarz berdim</button>
+          <button class="type-tab"        data-type="debt_taken" id="tab_dt">💰 Qarz oldim</button>
+        </div>
+        <div class="form-card">
+          <input type="hidden" id="editId"/>
+          <div class="form-group">
+            <label id="lbl_amount">Miqdor</label>
+            <div class="amount-row">
+              <input type="number" id="amountInput" placeholder="0" inputmode="decimal" min="0"/>
+              <select id="currSel" class="cur-sel">
+                <option value="uzs">so'm</option>
+                <option value="usd">USD</option>
+                <option value="eur">EUR</option>
+                <option value="rub">RUB</option>
+              </select>
+            </div>
+          </div>
+          <button class="mic-form-btn" id="micBtn">🎙️ Ovoz bilan to'ldirish</button>
+          <div class="mic-status hidden" id="micStatus">🔴 Gapiring...</div>
+          <div class="form-group">
+            <label id="lbl_cat">Kategoriya</label>
+            <div class="cat-search-row">
+              <input type="text" id="catSearch" placeholder="Qidirish..." autocomplete="off"/>
+              <button class="icon-btn-sm" id="addCatBtn">＋</button>
+            </div>
+            <div id="catGrid" class="cat-grid"></div>
+            <input type="hidden" id="selCat"/>
+          </div>
+          <div class="form-group hidden" id="debtWrap">
+            <label id="lbl_to">Kimga</label>
+            <input type="text" id="debtPerson" placeholder="Masalan: Ali"/>
+          </div>
+          <div class="form-group">
+            <label id="lbl_date">Sana</label>
+            <input type="date" id="dateInput"/>
+          </div>
+          <div class="form-group">
+            <label id="lbl_repeat">Takroriy</label>
+            <select id="repeatSel" class="filter-sel">
+              <option value="none">Yo'q</option>
+              <option value="daily">Har kun</option>
+              <option value="weekly">Har hafta</option>
+              <option value="monthly">Har oy</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label id="lbl_note">Izoh</label>
+            <input type="text" id="noteInput" id="lbl_note_ph" placeholder="Masalan: oylik oldim"/>
+          </div>
+          <div class="form-group">
+            <label id="lbl_tags">Teglar</label>
+            <input type="text" id="tagsInput" placeholder="ish, shaxsiy, oila"/>
+          </div>
+          <button class="submit-btn" id="submitBtn">✓ Saqlash</button>
+          <button class="cancel-btn hidden" id="cancelEdit">✕ Bekor qilish</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GOALS -->
+    <section class="page" id="page-goals">
+      <div class="page-scroll">
+        <div class="page-header">
+          <h2 id="lbl_goals">🎯 Maqsadlar</h2>
+          <button class="big-add-btn" id="addGoalBtn">＋ Maqsad</button>
+        </div>
+        <div class="goals-stats" id="goalsStats"></div>
+        <div id="goalsList" class="goals-list"></div>
+      </div>
+    </section>
+
+    <!-- AI -->
+    <section class="page" id="page-ai">
+      <div class="page-scroll ai-page">
+        <div class="page-header"><h2>🤖 AI <span id="lbl_ai_title">Moliya Maslahati</span></h2></div>
+        <div class="ai-messages" id="aiMessages"></div>
+        <div class="ai-quick" id="aiQuick"></div>
+        <div class="ai-input-row">
+          <input type="text" id="aiInput" class="ai-input" placeholder="Savol yozing..."/>
+          <button class="ai-send" id="aiSend">➤</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="page" id="page-settings">
+      <div class="page-scroll">
+        <div class="profile-hero">
+          <div class="profile-av-wrap">
+            <div class="profile-av" id="profileAv">😊</div>
+            <button class="av-edit-btn" id="changeAvBtn">✏️</button>
+          </div>
+          <div class="profile-name" id="profileName">Foydalanuvchi</div>
+          <div class="profile-user" id="profileUser">@spenduz</div>
+          <div class="profile-since" id="profileSince"></div>
+          <div class="profile-stats">
+            <div class="pstat"><div class="pstat-val" id="pstatTxn">0</div><div class="pstat-lbl" id="lbl_pstat_txn">Tranzaksiya</div></div>
+            <div class="pstat-div"></div>
+            <div class="pstat"><div class="pstat-val pos" id="pstatInc">0</div><div class="pstat-lbl" id="lbl_pstat_inc">Daromad</div></div>
+            <div class="pstat-div"></div>
+            <div class="pstat"><div class="pstat-val neg" id="pstatExp">0</div><div class="pstat-lbl" id="lbl_pstat_exp">Xarajat</div></div>
+          </div>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title" id="lbl_profile">Profil</div>
+          <div class="sitem"><div class="sitem-info"><div class="sitem-lbl" id="lbl_name">Ism</div></div><input type="text" id="editName" class="sinput" maxlength="30"/></div>
+          <div class="sitem"><div class="sitem-info"><div class="sitem-lbl">Username</div></div><input type="text" id="editUser" class="sinput" maxlength="30"/></div>
+          <button class="accent-btn full mt8" id="saveProfileBtn">✓ <span id="lbl_save_profile">Saqlash</span></button>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title" id="lbl_lang_title">Til</div>
+          <div class="lang-grid" id="settingsLangGrid" style="padding:8px 12px 12px">
+            <button class="lang-btn active" data-lang="uz">🇺🇿 O'zbek</button>
+            <button class="lang-btn" data-lang="ru">🇷🇺 Русский</button>
+            <button class="lang-btn" data-lang="en">🇬🇧 English</button>
+            <button class="lang-btn" data-lang="tj">🇹🇯 Тоҷикӣ</button>
+          </div>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title" id="lbl_interface">Interfeys</div>
+          <div class="sitem">
+            <div class="sitem-info"><div class="sitem-lbl" id="lbl_theme">Mavzu</div><div class="sitem-sub">Qorong'i / Yorug'</div></div>
+            <div class="toggle-wrap"><input type="checkbox" id="themeToggle" class="toggle-inp" checked/><label for="themeToggle" class="toggle-lbl"></label></div>
+          </div>
+          <div class="sitem">
+            <div class="sitem-info"><div class="sitem-lbl" id="lbl_currency">Valyuta</div></div>
+            <select class="ssel" id="curSelect"><option value="uzs">so'm</option><option value="usd">USD $</option><option value="eur">EUR €</option><option value="rub">RUB ₽</option></select>
+          </div>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title" id="lbl_notif">🔔 Bildirishnomalar</div>
+          <div class="sitem">
+            <div class="sitem-info"><div class="sitem-lbl" id="lbl_push">Push bildirishnoma</div><div class="sitem-sub" id="notifStatus">O'chirilgan</div></div>
+            <div class="toggle-wrap"><input type="checkbox" id="notifToggle" class="toggle-inp"/><label for="notifToggle" class="toggle-lbl"></label></div>
+          </div>
+          <div class="sitem"><div class="sitem-info"><div class="sitem-lbl" id="lbl_notif_time">Eslatma vaqti</div></div><input type="time" id="notifTime" class="sinput" value="21:00"/></div>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title" id="lbl_security">🔐 Xavfsizlik</div>
+          <div class="sitem">
+            <div class="sitem-info"><div class="sitem-lbl" id="lbl_pin">PIN kod</div><div class="sitem-sub" id="pinStatus">O'rnatilmagan</div></div>
+            <button class="accent-btn sm" id="setPinBtn">O'rnatish</button>
+          </div>
+          <div class="sitem hidden" id="removePinRow">
+            <div class="sitem-info"><div class="sitem-lbl" id="lbl_remove_pin">PIN ni o'chirish</div></div>
+            <button class="danger-btn sm" id="removePinBtn">O'chirish</button>
+          </div>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title" id="lbl_custom_cats">Maxsus kategoriyalar</div>
+          <div id="catManageList"></div>
+          <button class="accent-btn full mt8" id="addCatSettingsBtn">+ <span id="lbl_add_cat">Yangi kategoriya</span></button>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title" id="lbl_family">👥 Oila byudjeti</div>
+          <div id="familyList"></div>
+          <button class="accent-btn full mt8" id="addFamilyBtn">+ <span id="lbl_add_member">A'zo qo'shish</span></button>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title" id="lbl_data">Ma'lumotlar</div>
+          <button class="saction-btn" id="exportBtn">📤 <span id="lbl_export">Eksport (JSON)</span></button>
+          <button class="saction-btn" id="importBtn">📥 <span id="lbl_import">Import</span></button>
+          <input type="file" id="importFile" accept=".json" class="hidden"/>
+          <button class="saction-btn danger" id="resetBtn">⚠️ <span id="lbl_reset">Barcha ma'lumotlarni o'chirish</span></button>
+        </div>
+
+        <div class="sgroup">
+          <div class="sgroup-title" id="lbl_about">Ilova haqida</div>
+          <div class="about-card">
+            <div class="about-logo">💸</div>
+            <div class="about-name">SpendUZ Pro</div>
+            <div class="about-ver">v5.0.0</div>
+            <div class="about-bot">@Spend_uz_bot</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="home"><span class="nav-ico">🏠</span><span class="nav-lbl" id="nav_home">Bosh</span></button>
+    <button class="nav-btn" data-tab="budget"><span class="nav-ico">📊</span><span class="nav-lbl" id="nav_budget">Byudjet</span></button>
+    <button class="nav-btn nav-add" data-tab="add"><span class="nav-add-ico">＋</span></button>
+    <button class="nav-btn" data-tab="goals"><span class="nav-ico">🎯</span><span class="nav-lbl" id="nav_goals">Maqsad</span></button>
+    <button class="nav-btn" data-tab="settings"><span class="nav-ico">⚙️</span><span class="nav-lbl" id="nav_settings">Sozlamalar</span></button>
+  </nav>
+
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay hidden" id="goalModal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="goalModalTitle">Maqsad qo'shish</h3><button class="modal-close" id="closeGoalModal">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editGoalId"/>
+      <div class="form-group"><label>Nomi</label><input type="text" id="goalName" placeholder="iPhone 16"/></div>
+      <div class="form-group"><label>Emoji</label><input type="text" id="goalEmoji" placeholder="🎯" maxlength="4"/></div>
+      <div class="form-group"><label>Maqsad summa</label><input type="number" id="goalTarget" placeholder="5000000" min="0"/></div>
+      <div class="form-group"><label>Hozirgi jamg'arma</label><input type="number" id="goalCurrent" placeholder="0" min="0"/></div>
+      <div class="form-group"><label>Muddat</label><input type="date" id="goalDeadline"/></div>
+      <button class="submit-btn" id="saveGoalBtn">✓ Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="goalAddModal">
+  <div class="modal sm-modal">
+    <div class="modal-head"><h3 id="goalAddTitle">Jamg'arma</h3><button class="modal-close" id="closeGoalAddModal">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Miqdor</label><input type="number" id="goalAddAmount" placeholder="100000" min="0"/></div>
+      <button class="submit-btn" id="saveGoalAddBtn">✓ Qo'shish</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="receiptModal">
+  <div class="modal">
+    <div class="modal-head"><h3>🧾 Chek</h3><button class="modal-close" id="closeReceiptModal">✕</button></div>
+    <div class="modal-body"><div class="receipt" id="receiptContent"></div><button class="submit-btn" id="receiptShareBtn">📤 Ulashish</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="catModal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="lbl_new_cat">Yangi kategoriya</h3><button class="modal-close" id="closeCatModal">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nomi</label><input type="text" id="newCatName" placeholder="Kategoriya..."/></div>
+      <div class="form-group"><label>Emoji</label><div class="emoji-picker" id="emojiPicker"></div><input type="text" id="newCatEmoji" placeholder="📦" maxlength="4"/></div>
+      <div class="form-group"><label>Rang</label><div class="color-picker" id="colorPicker"></div></div>
+      <input type="hidden" id="newCatColor" value="#00E5A0"/>
+      <div class="form-group">
+        <label>Turi</label>
+        <div class="type-toggle">
+          <button class="tgl-btn active" data-cattype="expense" id="cattype_exp">Xarajat</button>
+          <button class="tgl-btn" data-cattype="income" id="cattype_inc">Daromad</button>
+        </div>
+      </div>
+      <button class="submit-btn" id="saveCatBtn">✓ Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="avatarModal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="lbl_avatar">Avatar tanlang</h3><button class="modal-close" id="closeAvatarModal">✕</button></div>
+    <div class="modal-body"><div class="avatar-grid-big" id="avatarGridBig"></div></div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="pinSetupModal">
+  <div class="modal sm-modal">
+    <div class="modal-head"><h3 id="pinSetupTitle">PIN o'rnatish</h3><button class="modal-close" id="closePinSetupModal">✕</button></div>
+    <div class="modal-body">
+      <div class="pin-dots" style="justify-content:center;margin-bottom:8px">
+        <span class="pin-dot" id="psd1"></span><span class="pin-dot" id="psd2"></span>
+        <span class="pin-dot" id="psd3"></span><span class="pin-dot" id="psd4"></span>
+      </div>
+      <div class="pin-hint" id="pinSetupHint">Yangi PIN kiriting</div>
+      <div class="pin-pad">
+        <button class="pin-btn" data-sn="1">1</button><button class="pin-btn" data-sn="2">2</button><button class="pin-btn" data-sn="3">3</button>
+        <button class="pin-btn" data-sn="4">4</button><button class="pin-btn" data-sn="5">5</button><button class="pin-btn" data-sn="6">6</button>
+        <button class="pin-btn" data-sn="7">7</button><button class="pin-btn" data-sn="8">8</button><button class="pin-btn" data-sn="9">9</button>
+        <button class="pin-btn pin-clear" id="pinSetupClear">⌫</button>
+        <button class="pin-btn" data-sn="0">0</button>
+        <button class="pin-btn pin-ok" id="pinSetupOk">✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="budgetModal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="lbl_add_budget">Byudjet qo'shish</h3><button class="modal-close" id="closeBudgetModal">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Kategoriya</label><select id="budgetCatSel" class="filter-sel" style="width:100%"></select></div>
+      <div class="form-group"><label>Limit</label><input type="number" id="budgetLimit" placeholder="500000" min="0"/></div>
+      <div class="form-group"><label>Oy</label><input type="month" id="budgetMonth"/></div>
+      <button class="submit-btn" id="saveBudgetBtn">✓ Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="familyModal">
+  <div class="modal sm-modal">
+    <div class="modal-head"><h3 id="lbl_add_family">A'zo qo'shish</h3><button class="modal-close" id="closeFamilyModal">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Ismi</label><input type="text" id="familyName" placeholder="Malika"/></div>
+      <div class="form-group"><label>Emoji</label><input type="text" id="familyEmoji" placeholder="👩" maxlength="4"/></div>
+      <button class="submit-btn" id="saveFamilyBtn">✓ Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="confirmModal">
+  <div class="modal sm-modal">
+    <div class="modal-head"><h3 id="confirmTitle">Tasdiqlang</h3><button class="modal-close" id="closeConfirmModal">✕</button></div>
+    <div class="modal-body">
+      <p id="confirmMsg" style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6"></p>
+      <div style="display:flex;gap:8px">
+        <button class="cancel-btn" style="flex:1;margin:0" id="confirmNo">Bekor qilish</button>
+        <button class="danger-confirm-btn" id="confirmYes">O'chirish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>
